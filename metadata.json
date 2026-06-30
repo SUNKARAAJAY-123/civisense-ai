@@ -1,0 +1,6 @@
+{
+  "name": "Community Hero",
+  "description": "AI-powered civic platform enabling citizens to report community issues, analyze severity, predict duplicates, and streamline public department resolutions.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
