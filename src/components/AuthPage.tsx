@@ -15,6 +15,23 @@ export default function AuthPage({ onAuthSuccess }: AuthPageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const parseAuthResponse = async (res: Response) => {
+    const contentType = res.headers.get('content-type') || '';
+    const body = contentType.includes('application/json')
+      ? await res.json()
+      : { error: await res.text() };
+
+    if (!res.ok) {
+      const message = body.error || 'Authentication failed. Please verify credentials.';
+      if (typeof message === 'string' && message.toLowerCase().includes('not found')) {
+        throw new Error('Authentication API not found. Please check the deployed backend URL in vercel.json.');
+      }
+      throw new Error(message);
+    }
+
+    return body;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -32,10 +49,7 @@ export default function AuthPage({ onAuthSuccess }: AuthPageProps) {
         body: JSON.stringify(body)
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Authentication failed. Please verify credentials.');
-      }
+      const data = await parseAuthResponse(res);
 
       onAuthSuccess(data.token, data.user);
     } catch (err: any) {
@@ -56,8 +70,7 @@ export default function AuthPage({ onAuthSuccess }: AuthPageProps) {
         body: JSON.stringify({ email: presetEmail, password: presetPass })
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      const data = await parseAuthResponse(res);
 
       onAuthSuccess(data.token, data.user);
     } catch (err: any) {
