@@ -179,9 +179,15 @@ JWT_SECRET="community-hero-secret-key-1337"
 GEMINI_API_KEY="your-gemini-api-key"
 
 # Supabase Configurations
-SUPABASE_URL="https://xxxx.supabase.co"
-SUPABASE_KEY="your-supabase-service-role-or-anon-key"
+SUPABASE_URL="https://ugrnpfonxfydyehlpfnq.supabase.co"
+SUPABASE_SECRET_KEY="your-supabase-secret-key"
+
+# Frontend public Supabase config
+VITE_SUPABASE_URL="https://ugrnpfonxfydyehlpfnq.supabase.co"
+VITE_SUPABASE_ANON_KEY="your-supabase-anon-or-publishable-key"
 ```
+
+Keep `SUPABASE_SECRET_KEY` only on the backend. Do not commit it, and do not use it in React or any other client-side code.
 
 ---
 
@@ -202,7 +208,7 @@ This project has been engineered with native separation of concerns, allowing st
    * `JWT_SECRET`: `your-custom-jwt-secret`
    * `GEMINI_API_KEY`: `your-google-gemini-key`
    * `SUPABASE_URL`: `your-supabase-api-url`
-   * `SUPABASE_KEY`: `your-supabase-service-key`
+   * `SUPABASE_SECRET_KEY`: `your-supabase-secret-key`
 5. Click **Deploy Web Service** and copy your backend URL (e.g. `https://your-backend.onrender.com`).
 
 ### 🎨 B. Frontend Deployment (Vercel)
@@ -225,6 +231,12 @@ This project has been engineered with native separation of concerns, allowing st
    }
    ```
 4. Click **Deploy**. Your community-hero platform is live and fully operational!
+
+Add these frontend environment variables in Vercel:
+```env
+VITE_SUPABASE_URL="https://ugrnpfonxfydyehlpfnq.supabase.co"
+VITE_SUPABASE_ANON_KEY="your-supabase-anon-or-publishable-key"
+```
 
 ---
 

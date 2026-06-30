@@ -16,5 +16,5 @@ services:
         sync: false
       - key: SUPABASE_URL
         sync: false
-      - key: SUPABASE_KEY
+      - key: SUPABASE_SECRET_KEY
         sync: false

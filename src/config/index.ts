@@ -6,6 +6,6 @@ export const config = {
   JWT_SECRET: process.env.JWT_SECRET || 'community-hero-secret-key-1337',
   NODE_ENV: process.env.NODE_ENV || 'development',
   SUPABASE_URL: process.env.SUPABASE_URL,
-  SUPABASE_KEY: process.env.SUPABASE_KEY,
+  SUPABASE_SECRET_KEY: process.env.SUPABASE_SECRET_KEY,
   GEMINI_API_KEY: process.env.GEMINI_API_KEY
 };

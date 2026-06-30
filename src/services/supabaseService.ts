@@ -6,8 +6,11 @@ import { User, Issue, Comment, Notification, RewardItem, RedeemedReward, Leaderb
  */
 const isSupabaseConfigured = (() => {
   try {
-    const supabaseUrl = process.env.SUPABASE_URL || (import.meta as any).env?.VITE_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || (import.meta as any).env?.VITE_SUPABASE_ANON_KEY;
+    const serverEnv = typeof process !== 'undefined' ? process.env : undefined;
+    const clientEnv = (import.meta as any).env;
+    const isServer = typeof window === 'undefined';
+    const supabaseUrl = isServer ? serverEnv?.SUPABASE_URL : clientEnv?.VITE_SUPABASE_URL;
+    const supabaseKey = isServer ? serverEnv?.SUPABASE_SECRET_KEY : clientEnv?.VITE_SUPABASE_ANON_KEY;
     const configured = !!(supabaseUrl && supabaseKey);
     if (!configured) {
       console.warn('⚠️ SUPABASE WARNING: Connection parameters are missing. Running in local memory fallback mode.');
