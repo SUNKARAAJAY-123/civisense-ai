@@ -168,6 +168,13 @@ CREATE POLICY "Allow votes operations" ON votes FOR ALL USING (true);
 CREATE POLICY "Allow verifications operations" ON verifications FOR ALL USING (true);
 CREATE POLICY "Allow activity logging" ON activity_logs FOR ALL USING (true);
 
+-- GRANTS FOR SUPABASE API ROLES
+-- RLS policies decide row-level access, but PostgREST roles still need schema/table privileges.
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL FUNCTIONS IN SCHEMA public TO anon, authenticated, service_role;
+
 -- ENABLE REALTIME FOR CORRESPONDING TABLES
 -- In Supabase, we enable realtime by adding the tables to the supabase_realtime publication
 alter publication supabase_realtime add table issues;
