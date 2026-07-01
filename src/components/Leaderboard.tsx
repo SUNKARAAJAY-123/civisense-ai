@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LeaderboardEntry } from '../types';
+import { safeParseResponse } from '../utils';
 import { Trophy, Medal, Award, Flame, Search, CheckCircle2, Shield } from 'lucide-react';
 
 interface LeaderboardProps {
@@ -17,9 +18,11 @@ export default function Leaderboard({ token }: LeaderboardProps) {
       const res = await fetch('/api/leaderboard', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      const data = await safeParseResponse(res);
       if (res.ok) {
-        const data = await res.json();
         setEntries(data);
+      } else {
+        console.error('Failed to load leaderboard:', data.error || 'API responded with an error');
       }
     } catch (e) {
       console.error('Failed to load leaderboard:', e);

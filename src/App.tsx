@@ -12,6 +12,7 @@ import AdminDashboard from './components/AdminDashboard';
 import Leaderboard from './components/Leaderboard';
 import RewardsStore from './components/RewardsStore';
 import { Issue, Comment, Notification, User } from './types';
+import { safeParseResponse } from './utils';
 
 export default function App() {
   // Session State
@@ -35,13 +36,14 @@ export default function App() {
   const [filterStatus, setFilterStatus] = useState('');
   const [filterSeverity, setFilterSeverity] = useState('');
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   // Fetch active issues
   const fetchIssues = async () => {
     try {
       const res = await fetch('/api/issues');
+      const data = await safeParseResponse(res);
       if (res.ok) {
-        const data = await res.json();
         setIssues(data);
         
         // Keep selected issue in sync if currently viewed
@@ -49,6 +51,8 @@ export default function App() {
           const updated = data.find((i: Issue) => i.id === selectedIssue.id);
           if (updated) setSelectedIssue(updated);
         }
+      } else {
+        console.error('Failed to load issues:', data.error || 'API responded with an error');
       }
     } catch (e) {
       console.error('Failed to load issues:', e);
@@ -62,9 +66,11 @@ export default function App() {
       const res = await fetch('/api/notifications', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      const data = await safeParseResponse(res);
       if (res.ok) {
-        const data = await res.json();
         setNotifications(data);
+      } else {
+        console.error('Failed to load notifications:', data.error || 'API responded with an error');
       }
     } catch (e) {
       console.error('Failed to load notifications:', e);
@@ -78,10 +84,12 @@ export default function App() {
       const res = await fetch('/api/auth/profile', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      const data = await safeParseResponse(res);
       if (res.ok) {
-        const data = await res.json();
         setUser(data);
         localStorage.setItem('hero_user', JSON.stringify(data));
+      } else {
+        console.error('Failed to load user profile:', data.error || 'API responded with an error');
       }
     } catch (e) {
       console.error('Failed to load user profile:', e);
@@ -92,9 +100,11 @@ export default function App() {
   const fetchComments = async (issueId: string) => {
     try {
       const res = await fetch(`/api/issues/${issueId}`);
+      const data = await safeParseResponse(res);
       if (res.ok) {
-        const data = await res.json();
         setComments(data.comments);
+      } else {
+        console.error('Failed to load comments:', data.error || 'API responded with an error');
       }
     } catch (e) {
       console.error('Failed to load comments:', e);
@@ -156,10 +166,12 @@ export default function App() {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      const data = await safeParseResponse(res);
       if (res.ok) {
-        const data = await res.json();
         showToast(data.voted ? 'Upvoted report! 👍' : 'Upvote removed.');
         fetchIssues();
+      } else {
+        showToast(data.error || 'Upvote request failed.');
       }
     } catch (e) {
       console.error('Failed to upvote:', e);
@@ -177,7 +189,7 @@ export default function App() {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      const data = await res.json();
+      const data = await safeParseResponse(res);
       if (res.ok) {
         showToast('Successfully verified on-site! +15 Points Earned! 🎖️');
         fetchIssues();
@@ -209,10 +221,13 @@ export default function App() {
         body: JSON.stringify({ content: newCommentText })
       });
 
+      const data = await safeParseResponse(res);
       if (res.ok) {
         setNewCommentText('');
         fetchComments(selectedIssue.id);
         fetchIssues(); // Refresh comments counts
+      } else {
+        setFetchError(data.error || 'Failed to post comment.');
       }
     } catch (e) {
       console.error('Failed to post comment:', e);

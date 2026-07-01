@@ -7,6 +7,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend 
 } from 'recharts';
 import { Issue, IssueStatus, IssueSeverity } from '../types';
+import { safeParseResponse } from '../utils';
 import { 
   ShieldAlert, Settings, RefreshCw, Layers, CheckCircle2, 
   Clock, TrendingUp, Users, ChevronRight, Check, Send, AlertTriangle 
@@ -41,9 +42,11 @@ export default function AdminDashboard({
       const res = await fetch('/api/analytics', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      const data = await safeParseResponse(res);
       if (res.ok) {
-        const data = await res.json();
         setAnalytics(data);
+      } else {
+        console.error('Failed to load analytics:', data.error || 'API responded with an error');
       }
     } catch (e) {
       console.error('Failed to load analytics:', e);

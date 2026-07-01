@@ -38,3 +38,24 @@ function deg2rad(deg: number): number {
 export function getCleanBase64(base64Str: string): string {
   return base64Str.replace(/^data:image\/\w+;base64,/, '');
 }
+
+/**
+ * Safely parse a fetch Response as JSON or fallback to text under the `error` key.
+ * Returns the parsed JSON when possible, otherwise `{ error: string }`.
+ */
+export async function safeParseResponse(res: Response): Promise<any> {
+  const contentType = res.headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    try {
+      return await res.json();
+    } catch (e) {
+      const text = await res.text();
+      return { error: text };
+    }
+  }
+
+  // Not JSON - return raw text as an `error` property for consistency
+  const text = await res.text();
+  return { error: text };
+}

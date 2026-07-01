@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { safeParseResponse } from '../utils';
 import { Camera, MapPin, Upload, Loader2, Sparkles, AlertCircle, X, ShieldAlert } from 'lucide-react';
 
 interface ReportIssueModalProps {
@@ -162,7 +163,7 @@ export default function ReportIssueModal({
         })
       });
 
-      const data = await response.json();
+      const data = await safeParseResponse(response);
 
       if (!response.ok) {
         throw new Error(data.error || 'Server rejected reporting file.');

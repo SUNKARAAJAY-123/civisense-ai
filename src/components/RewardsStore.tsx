@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { safeParseResponse } from '../utils';
 import { RewardItem } from '../types';
 import { Ticket, Gift, Sparkles, AlertCircle, ShoppingBag, CheckCircle2, Award } from 'lucide-react';
 
@@ -25,9 +26,11 @@ export default function RewardsStore({
       const res = await fetch('/api/rewards', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      const data = await safeParseResponse(res);
       if (res.ok) {
-        const data = await res.json();
         setRewards(data);
+      } else {
+        console.error('Failed to load rewards:', data.error || 'API responded with an error');
       }
     } catch (e) {
       console.error('Failed to load rewards:', e);
@@ -60,7 +63,7 @@ export default function RewardsStore({
         body: JSON.stringify({ itemId: item.id })
       });
 
-      const data = await res.json();
+      const data = await safeParseResponse(res);
       if (!res.ok) {
         throw new Error(data.error || 'Redemption rejected.');
       }
