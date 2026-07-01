@@ -386,6 +386,7 @@ export const supabaseService = {
       };
       return user;
     }
+
     const supabase = getSupabaseClient();
     const { error } = await supabase
       .from('profiles')
@@ -408,6 +409,7 @@ export const supabaseService = {
     }
     return user;
   },
+
 
   async updateUserPoints(id: string, pointsChange: number): Promise<number> {
     if (!isSupabaseConfigured) {
